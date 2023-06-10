@@ -2,7 +2,7 @@
 
 const bodyJsonSchema = {
     type: 'object',
-    required: ['id', 'email', 'assunto', 'mensagem'],
+    required: ['id', 'email', 'mensagem'],
     properties: {
         id: { type: 'number' },
         email: { type: 'string' },

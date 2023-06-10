@@ -6,7 +6,7 @@ const build = (opts = {}) => {
     const app = fastify(opts);
 
     app.register(require('./routes/helloWorldRoute'));
-    app.register(require('./routes/enviarEmailRoute'))
+    app.register(require('./routes/enviarEmailRoute'));
     //Todo:
     //ver o que tem que fixar exposto ou nao
     //POST /enviarEmail
