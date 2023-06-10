@@ -6,6 +6,7 @@ const axios = require('axios');
 
 const EMAIL_BICICLETARIO = process.env.EMAIL_BICICLETARIO || "bicicletariogrupoa@gmail.com";
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || "xpnbyaknodstgici";
+const REGEX_TIMEOUT = process.env.REGEX_TIMEOUT || 5000;
 
 const enviarEmail = async (request, reply) => {
     log.info("Iniciando a funçao enviarEmail");
@@ -13,7 +14,10 @@ const enviarEmail = async (request, reply) => {
     const { email, assunto, mensagem } = request.body;
     const isValid = await validateEmailFormat(email);
 
-    if (!isValid) return reply.status(422).send("Email com formato invalido");
+    if (!isValid) {
+        log.error("Formato de email invalido");
+        return reply.status(422).send("Email com formato invalido");
+    }
 
     const emailValidated = await validateEmail(email);
 
@@ -66,8 +70,18 @@ const validateEmail = async (email) => {
 };
 
 const validateEmailFormat = async (email) => {
-    const emailRegex = new RegExp(/^[a-zA-Z0-9_%+-]+@[a-zA-Z0-9.-]+[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})$/, "gm");
-    return emailRegex.test(email);
+    return new Promise((resolve, reject) => {
+        const emailRegex = new RegExp(/^[a-zA-Z0-9_%+-]+@[a-zA-Z0-9.-]+[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})$/, "gm");
+
+        const timer = setTimeout(() => {
+            resolve(false); // Timeout reached, return false indicating invalid format
+        }, REGEX_TIMEOUT);
+
+        const result = emailRegex.test(email);
+
+        clearTimeout(timer);
+        resolve(result); // Resolve with the result of the regex evaluation
+    });
 };
 
 module.exports = {
