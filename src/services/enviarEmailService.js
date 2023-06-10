@@ -66,7 +66,7 @@ const validateEmail = async (email) => {
 };
 
 const validateEmailFormat = async (email) => {
-    const emailRegex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "gm");
+    const emailRegex = new RegExp(/^[a-zA-Z0-9_%+-]+@[a-zA-Z0-9.-]+[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})$/, "gm");
     return emailRegex.test(email);
 };
 
