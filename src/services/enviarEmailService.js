@@ -8,14 +8,15 @@ const EMAIL_BICICLETARIO = process.env.EMAIL_BICICLETARIO || "bicicletariogrupoa
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || "xpnbyaknodstgici";
 
 const enviarEmail = async (request, reply) => {
-
-    log.info("Chamando o nodemailer");
+    log.info("Iniciando a funçao enviarEmail");
 
     const { email, assunto, mensagem } = request.body;
+    const isValid = await validateEmailFormat(email);
+    console.log("@@@@@@@@@@@@@", isValid)
+
+    if (!isValid) return reply.status(422).send("Email com formato invalido");
 
     const emailValidated = await validateEmail(email);
-
-    console.log("@@@@@@@@@@@@@", emailValidated)
 
     if(emailValidated){
         const mailOptions = {
@@ -38,7 +39,7 @@ const enviarEmail = async (request, reply) => {
                 return reply.status(500).send("Erro na api de envio de emails");
             });
     } else if (!emailValidated){
-        return reply.status(404).send("email invalido");
+        return reply.status(404).send("Email invalido");
     } else {
         return reply.status(500).send(emailValidated);
     }
@@ -59,13 +60,16 @@ const validateEmail = async (email) => {
     if (response.status === 200) {
         const result = response.data;
 
-        console.log("¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨", result)
-
         return (result.is_verified === 'True');
     } else {
-        throw new Error('Erro na api de verificação de emails');
+        return 'Erro na api de verificação de emails';
     }
-}
+};
+
+const validateEmailFormat = async (email) => {
+    const emailRegex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "gm");
+    return emailRegex.test(email);
+};
 
 //TODO:
 //status responses: 200 - envio de emaili solicitado, 404 - email não existe, 422 - email com formato invalido
