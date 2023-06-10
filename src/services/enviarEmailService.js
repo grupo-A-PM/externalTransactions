@@ -12,7 +12,6 @@ const enviarEmail = async (request, reply) => {
 
     const { email, assunto, mensagem } = request.body;
     const isValid = await validateEmailFormat(email);
-    console.log("@@@@@@@@@@@@@", isValid)
 
     if (!isValid) return reply.status(422).send("Email com formato invalido");
 
@@ -70,9 +69,6 @@ const validateEmailFormat = async (email) => {
     const emailRegex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "gm");
     return emailRegex.test(email);
 };
-
-//TODO:
-//status responses: 200 - envio de emaili solicitado, 404 - email não existe, 422 - email com formato invalido
 
 module.exports = {
     enviarEmail,
